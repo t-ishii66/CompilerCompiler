@@ -1,0 +1,170 @@
+START(COMCOM)
+COMCOM	: "START(" NAME ")" STMTS "END"	{  
+					print("#include \"comcom.h\"\n");
+					print("void firstcall(int e) { _");
+					call(1);
+					print("(e); }\n");
+					call(2); }
+;
+STMTS	: STMT STMTS			{ call(1); call(2); }
+	| STMT				{ call(1); }
+;
+STMT	: NAME ":" RULES ";"		{ print("\n void _"); call(1);
+					print("(int e) {\n"); call(2);
+					print("\n }\n"); }
+;
+RULES	: RULE "|" RULES		{ print(" if (try()) {"); call(1);
+					print(" ok(); }\n  else "); call(2); }
+	| RULE				{ print("{"); call(1); print("}"); }
+;
+RULE	: TERMS "{" OUTS "}"		{ call(1); print(" mknode(_f");
+					genNum();
+					print(");");
+					<!--
+						print("void _f");
+						genNum();
+						print("(int n, int a) {");
+						call(2);
+						print("}\n");
+					// -->
+					}
+;
+TERMS	: TERM TERMS			{ call(1); call(2); }
+	| TERM				{ call(1); }
+;
+TERM	: NAME				{ print(" _"); call(1);
+					print("(E);"); }
+	| QSTR				{ print(" check("); call(1);
+					print(");"); }
+	| "+"				{ print(" combine();"); }
+;
+OUTS	: OUT OUTS			{ call(1); call(2); }
+	| OUT				{ call(1); }
+;
+OUT	: "call(" NUMS ");"		{ print("call("); call(1);
+					print(");"); }
+	| "print(" QSTR ");"		{ print("print("); call(1);
+					print(");"); }
+	| "genNum();"			{ print("genNum();"); }
+	| "<!--" OUTS "// -->"		{ print("spoolOpen();\n"); call(1);
+					print("spoolClose();\n"); }
+;
+NAME	: CHR+NAME			{ call(1); call(2); }
+	| CHR				{ call(1); }
+;
+QSTR	: "\""+QSTR1			{ print("\""); call(1); }
+;
+QSTR1	: "\""				{ print("\""); }
+	| CHR+QSTR1			{ call(1); call(2); }
+	| MCHR+QSTR1			{ call(1); call(2); }
+;
+
+CHR	: ALPH				{ call(1); }
+	| SALPH				{ call(1); }
+	| NUM				{ call(1); }
+;
+MCHR	: "\\"+MARK			{ print("\\"); call(1); }
+	| MARK				{ call(1); }
+;
+NUMS	: NUM+NUMS			{ call(1); call(2); }
+	| NUM				{ call(1); }
+;
+ALPH	: "A"				{ print("A"); }
+	| "B"				{ print("B"); }
+	| "C"				{ print("C"); }
+	| "D"				{ print("D"); }
+	| "E"				{ print("E"); }
+	| "F"				{ print("F"); }
+	| "G"				{ print("G"); }
+	| "H"				{ print("H"); }
+	| "I"				{ print("I"); }
+	| "J"				{ print("J"); }
+	| "K"				{ print("K"); }
+	| "L"				{ print("L"); }
+	| "M"				{ print("M"); }
+	| "N"				{ print("N"); }
+	| "O"				{ print("O"); }
+	| "P"				{ print("P"); }
+	| "Q"				{ print("Q"); }
+	| "R"				{ print("R"); }
+	| "S"				{ print("S"); }
+	| "T"				{ print("T"); }
+	| "U"				{ print("U"); }
+	| "V"				{ print("V"); }
+	| "W"				{ print("W"); }
+	| "X"				{ print("X"); }
+	| "Y"				{ print("Y"); }
+	| "Z"				{ print("Z"); }
+;
+SALPH	: "a"				{ print("a"); }
+	| "b"				{ print("b"); }
+	| "c"				{ print("c"); }
+	| "d"				{ print("d"); }
+	| "e"				{ print("e"); }
+	| "f"				{ print("f"); }
+	| "g"				{ print("g"); }
+	| "h"				{ print("h"); }
+	| "i"				{ print("i"); }
+	| "j"				{ print("j"); }
+	| "k"				{ print("k"); }
+	| "l"				{ print("l"); }
+	| "m"				{ print("m"); }
+	| "n"				{ print("n"); }
+	| "o"				{ print("o"); }
+	| "p"				{ print("p"); }
+	| "q"				{ print("q"); }
+	| "r"				{ print("r"); }
+	| "s"				{ print("s"); }
+	| "t"				{ print("t"); }
+	| "u"				{ print("u"); }
+	| "v"				{ print("v"); }
+	| "w"				{ print("w"); }
+	| "x"				{ print("x"); }
+	| "y"				{ print("y"); }
+	| "z"				{ print("z"); }
+;
+NUM	: "0"				{ print("0"); }
+	| "1"				{ print("1"); }
+	| "2"				{ print("2"); }
+	| "3"				{ print("3"); }
+	| "4"				{ print("4"); }
+	| "5"				{ print("5"); }
+	| "6"				{ print("6"); }
+	| "7"				{ print("7"); }
+	| "8"				{ print("8"); }
+	| "9"				{ print("9"); }
+;
+MARK	: " "				{ print(" "); }
+	| "!"				{ print("!"); }
+	| "\""				{ print("\""); }
+	| "#"				{ print("#"); }
+	| "$"				{ print("$"); }
+	| "%"				{ print("%"); }
+	| "&"				{ print("&"); }
+	| "'"				{ print("'"); }
+	| "("				{ print("("); }
+	| ")"				{ print(")"); }
+	| "*"				{ print("*"); }
+	| "+"				{ print("+"); }
+	| ","				{ print(","); }
+	| "-"				{ print("-"); }
+	| "." 				{ print("."); }
+	| "/"				{ print("/"); }
+	| ":"				{ print(":"); }
+	| ";"				{ print(";"); }
+	| "<"				{ print("<"); }
+	| "="				{ print("="); }
+	| ">"				{ print(">"); }
+	| "?"				{ print("?"); }
+	| "@"				{ print("@"); }
+	| "["				{ print("["); }
+	| "]"				{ print("]"); }
+	| "\\"				{ print("\\"); }
+	| "^"				{ print("^"); }
+	| "_"				{ print("_"); }
+	| "|"				{ print("|"); }
+	| "~"				{ print("~"); }
+	| "{"				{ print("{"); }
+	| "}"				{ print("}"); }
+;
+END
