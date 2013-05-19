@@ -1,3 +1,10 @@
+/*
+	Original Source code is written in Interface 1995/12 CQ-publishing 
+	company. www.cqpub.co.jp
+
+	This sorce code is drived version.
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
