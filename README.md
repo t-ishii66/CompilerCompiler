@@ -37,6 +37,29 @@ This is t4.out.c.
 The definition of this analyzer is sample.def.
 
 <pre>
+START(SAMPLE)
+SAMPLE : THIS IS "A" PEN {
+		call(1);
+		call(2);
+		call(3);
+		print("finish!"); 
+	}
+;
+THIS	: "THIS" 	{ print("-this-"); }
+	| "THAT"	{ print("-that-"); }
+;
+
+IS	: "IS" 		{ print("-is-");}
+	| "ARE"		{ print("-are-");}
+;
+PEN	: "PEN" 	{ print("-pen-");}
+	| "PENCIL"	{ print("-pencil-");}
+;
+
+END
+</pre>
+
+<pre>
 $ ./a.out sample.def sample.c
 $ gcc -o sample sample.c
 </pre>
