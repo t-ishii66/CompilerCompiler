@@ -21,12 +21,19 @@ t4.out.c is exactly same as t3.out.c .
 <h2>What is t3.out.c</h2>
 
 a.out generated from t3.out.c is a <b>Compiler Compier</b>.
-So, you can use this a.out like <b>yacc/bison</b>.
-<h3>You can also generate a new Compiler by a.out.</h3>
+So, you can use this a.out as a <b>yacc/bison</b>.
+<h3>You can also generate a new Compiler by this a.out.</h3>
 One of the souce code of the a.out is t0.def.
-t0.def is the definition of a.out.  a.out is defined by t0.def.
-So, a.out and t0.def can generate the same source code of a.out.
-This is t4.out.c.
+t0.def is the definition of the self extendable compiler compiler. 
+So, the a.out can generate the same source code of a.out by using t0.def .
+
+<pre>
+1. t0.def is the definition of the self extendable compiler compiler.
+2. The executable code from the t0.def is a.out.
+3. a.out is a compiler compiler like a yacc/bison.
+4. a.out can generate a C source code by using t0.def.
+5. That C code is the source code of a.out !
+</pre>
 
 -----------------------------------------------
 <h2>Example  "THIS IS A PEN Analyzer"</h2>
