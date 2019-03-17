@@ -32,7 +32,8 @@ So, the a.out can generate the same source code of a.out by using t0.def .
 2. The executable code from the t0.def is a.out.
 3. a.out is a compiler compiler like a yacc/bison.
 4. a.out can generate a C source code by using t0.def.
-5. That C code is the source code of a.out !
+5. And that C code is the source code of a.out !!
+6. You can design a new Compiler by using a.out.
 </pre>
 
 -----------------------------------------------
