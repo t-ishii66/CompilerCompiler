@@ -45,43 +45,49 @@ If `diff` shows no differences, the self-reproduction succeeded.
 - **Compactness:** the runtime (`comcom.h`) is small and the output is simple C.
 
 ## Getting Started With Your Own Grammar
-You can define a new grammar and generate a C parser from it. As an example:
+You can define a new grammar and generate a C parser from it. As an example,
+let's create a **Reverse Polish Notation (RPN) converter** that transforms
+infix expressions like `1+2*3` into postfix notation `1 2 3 * +`.
 
-1. Write a grammar file `calc.def`.
+1. Write a grammar file `rpn.def`.
 2. Generate a C parser:
 
 ```sh
-./a.out calc.def calc.c
-gcc calc.c -Wno-pointer-sign -o calc
+./a.out rpn.def rpn.c
+gcc rpn.c -Wno-pointer-sign -o rpn
 ```
 
 3. Test it with some input:
 
 ```sh
-printf "(10 + 5) * 3\n" | ./calc
+echo "1+2*3" | ./rpn
+# Output: 1 2 3 * +
+
+echo "(1+2)*3" | ./rpn
+# Output: 1 2 + 3 *
 ```
 
-## Example Grammar: `calc.def`
-Below is a complete `calc.def` you can use as a starting point. It defines a tiny
-arithmetic language with `+`, `-`, `*`, `/`, and parentheses, and it prints the
-parsed expression back out in a structured way.
+## Example Grammar: `rpn.def`
+Below is a complete `rpn.def` that converts infix arithmetic expressions to
+Reverse Polish Notation. The key insight is that by changing the order of
+`print()` and `call()`, we can output operators *after* their operands.
 
 ```def
-START(CALC)
-CALC    : EXPR { print("Result: "); call(1); print("\n"); }
+START(RPN)
+RPN     : EXPR { call(1); print("\n"); }
 ;
 
-EXPR    : TERM "+" EXPR     { call(1); print(" + "); call(2); }
-        | TERM "-" EXPR     { call(1); print(" - "); call(2); }
+EXPR    : TERM "+" EXPR     { call(1); print(" "); call(2); print(" +"); }
+        | TERM "-" EXPR     { call(1); print(" "); call(2); print(" -"); }
         | TERM              { call(1); }
 ;
 
-TERM    : FACTOR "*" TERM   { call(1); print(" * "); call(2); }
-        | FACTOR "/" TERM   { call(1); print(" / "); call(2); }
+TERM    : FACTOR "*" TERM   { call(1); print(" "); call(2); print(" *"); }
+        | FACTOR "/" TERM   { call(1); print(" "); call(2); print(" /"); }
         | FACTOR            { call(1); }
 ;
 
-FACTOR  : "(" EXPR ")"      { print("("); call(1); print(")"); }
+FACTOR  : "(" EXPR ")"      { call(1); }
         | NUMBER            { call(1); }
 ;
 
@@ -103,9 +109,79 @@ DIGIT   : "0" { print("0"); }
 END
 ```
 
+The grammar handles operator precedence naturally: `*` and `/` bind tighter
+than `+` and `-` because they are parsed at the `TERM` level, while `+` and `-`
+are parsed at the `EXPR` level.
+
 ## Notes
 - Most changes to output behavior should be made in `t0.def`.
 - Runtime mechanics (backtracking, parse trees, output plumbing) live in `comcom.h`.
+
+---
+
+## Advanced Topic: Building Your Own Language
+
+For those who want to go further, you can use this compiler compiler to create
+your own small programming language that compiles to C.
+
+### Challenge: Create a "mini" Language
+
+Try creating a simple language with the following syntax:
+
+```
+set x 5
+set y 10
+out x + y
+```
+
+This should compile to C code like:
+
+```c
+#include <stdio.h>
+int main(){
+int x=5;
+int y=10;
+printf("%d\n",x+y);
+return 0;
+}
+```
+
+### Hints
+
+1. **Structure your grammar** with these rules:
+   - `MINI` — the top-level rule that wraps everything in `main()`
+   - `STMTS` — a sequence of statements
+   - `STMT` — either a `set` statement or an `out` statement
+   - `EXPR` — an expression (variable, number, or binary operation)
+
+2. **Use `print()` to emit C code**:
+   - For `set x 5`, emit `int x=5;`
+   - For `out <expr>`, emit `printf("%d\n", <expr>);`
+
+3. **The key insight**: Your `.def` file defines a *translator* from your
+   language to C. Each grammar rule's action should `print()` the corresponding
+   C code.
+
+### Testing Your Compiler
+
+```sh
+# 1. Generate the compiler
+./a.out mini.def mini.c
+gcc mini.c -Wno-pointer-sign -o mini
+
+# 2. Write a program in your language
+echo 'set x 5
+set y 10
+out x + y' > program.mini
+
+# 3. Compile to C, then compile and run
+./mini < program.mini > program.c
+gcc program.c -o program
+./program
+# Output: 15
+```
+
+A working `mini.def` is included in this repository as a reference solution.
 
 ---
 Enjoy exploring how a compiler can define itself.
