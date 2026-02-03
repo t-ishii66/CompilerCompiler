@@ -62,7 +62,7 @@ void firstcall(int e) { _COMCOM(e); }
  if (try()) { check("call("); _NUMS(E); check(");"); mknode(_f15); ok(); }
   else  if (try()) { check("print("); _QSTR(E); check(");"); mknode(_f16); ok(); }
   else  if (try()) { check("genNum();"); mknode(_f17); ok(); }
-  else { check("<!--"); _OUTS(E); check("// -->"); mknode(_f18);}
+  else { check("<<"); _OUTS(E); check(">>"); mknode(_f18);}
  }
 
  void _NAME(int e) {
