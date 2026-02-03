@@ -146,6 +146,19 @@ return 0;
 }
 ```
 
+### How It Works
+
+Just like `rpn.def` defines an RPN converter, you will create `mini.def` that
+defines a **translator from mini language to C**. The compiler compiler reads
+`mini.def` and generates `mini.c` — a C program that can parse the mini language
+and output C code.
+
+The workflow is:
+```
+mini.def  --[a.out]-->  mini.c  --[gcc]-->  mini  (the mini compiler)
+program.mini  --[mini]-->  program.c  --[gcc]-->  program  (executable)
+```
+
 ### Hints
 
 1. **Structure your grammar** with these rules:
