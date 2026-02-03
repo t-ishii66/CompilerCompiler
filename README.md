@@ -1,88 +1,99 @@
 CompilerCompiler
 ================
 
-<h2>Self Extendable Compiler Compiler</h2>
+Overview
+--------
 
+This project is a compact "compiler compiler" — a tool that reads a formal grammar definition and
+produces a C parser/compiler for that grammar. It is self-referential: the grammar that defines the
+compiler compiler is included in the repository, and the generated compiler can reproduce its own
+source code from that grammar.
 
-comcom.h is header file , and it contains main() func.
-t0.def is the definition of <b>THIS Compiler Compiler</b>.
-t3.out.c is the C source code of <b>THIS Compiler Compiler</b>.
+Key files
+---------
+- `comcom.h` — runtime library and helper code used by all generated parsers.
+- `t0.def` — the grammar definition that *describes this compiler compiler*.
+- `t3.out.c` — a pre-generated C implementation of the compiler compiler. When compiled, the
+  resulting executable (`a.out`) can read `.def` files and emit C sources.
 
------------------------------------------------
-<h2>How to use this software.</h2>
-<pre>
-$ gcc t3.out.c
+Quick reproduction
+------------------
+To reproduce the self-generation test:
+
+```sh
+$ gcc t3.out.c -Wno-pointer-sign -o a.out
 $ ./a.out t0.def t4.out.c
-</pre>
-then, t4.out.c is generated.
-t4.out.c is exactly same as t3.out.c .
+$ diff t3.out.c t4.out.c
+# (no differences)
+```
 
------------------------------------------------
-<h2>What is t3.out.c</h2>
+This demonstrates thaThis demonstrates thaThis demonstrates thaThis demonstrates thaThi the
+compiler produces the same `t3.oct.c` source again.compiler produces the same `t3.oct.c` source again.compiler produces the same `t3.oct.c` sourlled a parser generator) transforms a formal grammar into code that
+recognizes that grammar. Instead of hanrecognizes that grammar. Instead of hanrecognizes that grammar. Instead of hanrecognizes that age in a higher-level notation and the tool generates the C
+implementation for you.
 
-a.out generated from t3.out.c is a <b>Compiler Compier</b>.
-So, you can use this a.out as a <b>yacc/bison</b>.
-<h3>You can also generate a new Compiler by this a.out.</h3>
-One of the souce code of the a.out is t0.def.
-t0.def is the definition of the self extendable compiler compiler. 
-So, the a.out can generate the same source code of a.out by using t0.def .
+Why this project is interesting
+------------------------------
+- Self-reference: the project contains a grammar that defines the tool that generates parsers.
+- Simplicity: the generator uses a small runtime (`comcom.h`) and a compact output format.
+- Educational: it is a good demonstration of metaprogramming and parser generation techniques.
 
-<pre>
-1. t0.def is the definition of the self extendable compiler compiler.
-2. The executable code from the t0.def is a.out.
-3. a.out is a compiler compiler like a yacc/bison.
-4. a.out can generate a C source code by using t0.def.
-5. And that C code is the source code of a.out !!
-6. You can design a new Compiler by using a.out.
-</pre>
+Getting started — a practical example
+-------------------------------------
 
------------------------------------------------
-<h2>Example  "THIS IS A PEN Analyzer"</h2>
+Below is a practical sample showing how you can use the compiler compiler to generate a parser
+for arithmetic expressions with correct operator precedence.
 
-"THIS IS A PEN Analyzer" can analyze a text file contains
-"THIS IS A PEN" text string or not.
+1) Write a grammar file `calc.def` (example below).
+2) Generate a C parser:
 
-The definition of this analyzer is sample.def.
+```sh
+$ ./a.out calc.def calc.c
+$ gcc calc.c -Wno-pointer-sign -o calc
+```
 
-<pre>
-START(SAMPLE)
-SAMPLE : THIS IS "A" PEN {
-		call(1);
-		call(2);
-		call(3);
-		print("finish!"); 
-	}
-;
-THIS	: "THIS" 	{ print("-this-"); }
-	| "THAT"	{ print("-that-"); }
+3) Use the generated parser on an input file:
+
+```sh
+$ printf "(10 + 5) $ printf "(10 + 5) $ printf "(10 + 5) $ printf "(10 + 5) $ printf "(10 + 5) $ printf "(10 + 5) $ printf "(10 + 5) $ printf "(10 + 5) $ printf "(10 + 5) $ printf "(10 + 5) $ example generates a parser that recognizes integer arithmetic with the usual $ printf "(10 + 5) $`/` higher $ printf "(10 + 5) $ printf "(ses.
+
+```
+START(CALC)
+CALC    : EXPR { print("Result: "); call(1); print("\n"); }
 ;
 
-IS	: "IS" 		{ print("-is-");}
-	| "ARE"		{ print("-are-");}
-;
-PEN	: "PEN" 	{ print("-pen-");}
-	| "PENCIL"	{ print("-pencil-");}
+EXPR    : TERM "+" EXPR     { call(1); print(" + "); call(3); }
+        | TERM "-" EXPR     { call(1); print(" - "); call(3); }
+        | TERM              { call(1); }
 ;
 
-END
-</pre>
+TERM    : FACTOR "*" TERM   { call(1); print(" * "); call(3); }
+        | FACTOR "/" TERM   { call(1); print(" / "); call(3); }
+        | FACTOR            { call(1); }
+;
 
-<pre>
-$ ./a.out sample.def sample.c
-$ gcc -o sample sample.c
-</pre>
+FACTOR  : "(" EXPR ")"      { print("("); call(2); print(")"); }
+        | NUMBER            { call(1); }
+;
 
-Now, you should make a definition file .
+NUMBER  : DIGIT+NUMBER     NU call(1); call(2); }
+        | DIGIT             { call(1); }
+;
 
-<pre>
-$ cat user.txt
-THIS IS A PENCIL
+DIGIT   : "0" { print("0"); }
+        | "1" { print("1"); }
+                                                                                                                                                                                                                                                                                                                              been updated to build cleanly with m                                                      no-pointe                                                        m passin                                                         ar*` (`byte*`) internally.
 
-$ ./sample user.txt user.out
-$ cat user.out
--this--is--pen-finish!
-</pre>
+Development tips
+----------------
+- Edit or extend `t0.def` to change how the compiler generator emits C code.
+- Use the `<!-- ... // -->` spool blocks- Use the `<!-- ... // -->` spool  code (like forward
+  declarations or helper functions) to a separate spool  declarations or helper functions) to  If y  declarations or helper functions) to a sewarning-free under strict compilers, prefer
+  adjusting `comcom.h` (the runtime) rather than repeatedly patching generated sources.
 
+License / Attribution
+---------------------
+This project is derived from code originally published in Interface (1995). See repository files
+for details.
 
-Enjoy.
-
+Enjoy exploring parser generation!
