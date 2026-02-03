@@ -166,7 +166,7 @@ void skipSpace(byte s)
 	-- I;
 }
 
-void check(byte* s)
+void check(const byte* s)
 {
 	skipSpace(*s);
 	while (*s) {
@@ -179,7 +179,7 @@ void check(byte* s)
 #define spoolOpen()	 F=1
 #define spoolClose()	 F=0
 
-void print(byte* s)
+void print(const byte* s)
 {
 	int z = strlen((const char*)s);
 	if (F == 0) {
@@ -287,7 +287,7 @@ void call2(int n, int b)
 		abend("branch no");
 
 	m = (TS[n + 1 + b].n);
-	(*TS[m].f)(m, 0);
+	((void (*)(int, int))TS[m].f)(m, 0);
 }
 
 void exec()
@@ -296,7 +296,7 @@ void exec()
 	if (E != 1)
 		abend("exec");
 	t = ES[-- E];
-	(*TS[t].f)(t, 0);
+	((void (*)(int, int))TS[t].f)(t, 0);
 }
 
 int main(int argc, char* argv[])
