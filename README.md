@@ -71,17 +71,17 @@ START(CALC)
 CALC    : EXPR { print("Result: "); call(1); print("\n"); }
 ;
 
-EXPR    : TERM "+" EXPR     { call(1); print(" + "); call(3); }
-        | TERM "-" EXPR     { call(1); print(" - "); call(3); }
+EXPR    : TERM "+" EXPR     { call(1); print(" + "); call(2); }
+        | TERM "-" EXPR     { call(1); print(" - "); call(2); }
         | TERM              { call(1); }
 ;
 
-TERM    : FACTOR "*" TERM   { call(1); print(" * "); call(3); }
-        | FACTOR "/" TERM   { call(1); print(" / "); call(3); }
+TERM    : FACTOR "*" TERM   { call(1); print(" * "); call(2); }
+        | FACTOR "/" TERM   { call(1); print(" / "); call(2); }
         | FACTOR            { call(1); }
 ;
 
-FACTOR  : "(" EXPR ")"      { print("("); call(2); print(")"); }
+FACTOR  : "(" EXPR ")"      { print("("); call(1); print(")"); }
         | NUMBER            { call(1); }
 ;
 

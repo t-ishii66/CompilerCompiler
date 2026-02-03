@@ -1,17 +1,23 @@
 START(COMCOM)
-COMCOM	: "START(" NAME ")" STMTS "END"	{  
+COMCOM	: "START(" NAME ")" STMTS "END"	{
 					print("#include \"comcom.h\"\n");
-					print("void firstcall(int e) { _");
-					call(1);
-					print("(e); }\n");
+					<!--
+						print("void firstcall(int e) { _");
+						call(1);
+						print("(e); }\n");
+					// -->
 					call(2); }
 ;
 STMTS	: STMT STMTS			{ call(1); call(2); }
 	| STMT				{ call(1); }
 ;
-STMT	: NAME ":" RULES ";"		{ print("\n void _"); call(1);
-					print("(int e) {\n"); call(2);
-					print("\n }\n"); }
+STMT	: NAME ":" RULES ";"		{ print("void _"); call(1);
+					print("(int e);\n");
+					<!--
+						print("\n void _"); call(1);
+						print("(int e) {\n"); call(2);
+						print("\n }\n");
+					// --> }
 ;
 RULES	: RULE "|" RULES		{ print(" if (try()) {"); call(1);
 					print(" ok(); }\n  else "); call(2); }
