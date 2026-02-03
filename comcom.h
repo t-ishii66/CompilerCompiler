@@ -9,12 +9,19 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <setjmp.h>
+#include <string.h>
+#include <unistd.h>
 
 typedef unsigned char	byte;
 typedef unsigned int	uint;
 
 #define TRUE	1
 #define FALSE	0
+
+/* Forward declarations */
+void back(void);
+void spoolOutput(void);
+void firstcall(int e);
 
 static FILE* FI = 0;		/* input file */
 static FILE* FO = 0;		/* output file */
@@ -153,11 +160,11 @@ void check(byte* s)
 
 void print(byte* s)
 {
-	int z = strlen(s);
+	int z = strlen((const char*)s);
 	if (F == 0) {
-		fputs(s, FO); maxO += z;
+		fputs((const char*)s, FO); maxO += z;
 	} else {
-		fputs(s, FS); maxS += z;
+		fputs((const char*)s, FS); maxS += z;
 	}
 }
 
@@ -169,7 +176,7 @@ void genNumber(uint* d)
 	if (*d == 0)
 		*d = ++ D;
 	sprintf(s, "%u", *d);
-	print(s);
+	print((byte*)s);
 }
 
 void spoolOutput()
@@ -211,14 +218,14 @@ void back()
 	I = BS[B].i;
 	K = BS[B].k;
 	++ cntB;
-	longjmp(&(BS[B].j), 1);
+	longjmp(BS[B].j, 1);
 }
 
-void storeFunc(int (*f)())
+void storeFunc(void (*f)(int, int))
 {
 	if (T > TS_SIZE)
 		abend("TS over");
-	TS[T ++].f = f;
+	TS[T ++].f = (int (*)())f;
 	if (T > maxT)
 		maxT = T;
 }

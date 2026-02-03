@@ -1,4 +1,26 @@
 #include "comcom.h"
+
+/* Forward declarations for all parsing functions */
+void _COMCOM(int e);
+void _STMTS(int e);
+void _STMT(int e);
+void _RULES(int e);
+void _RULE(int e);
+void _TERMS(int e);
+void _TERM(int e);
+void _OUTS(int e);
+void _OUT(int e);
+void _NAME(int e);
+void _QSTR(int e);
+void _QSTR1(int e);
+void _CHR(int e);
+void _MCHR(int e);
+void _NUMS(int e);
+void _ALPH(int e);
+void _SALPH(int e);
+void _NUM(int e);
+void _MARK(int e);
+
 void firstcall(int e) { _COMCOM(e); }
 
  void _COMCOM(int e) {
