@@ -1,6 +1,9 @@
 # Generated executable files
 a.out
 a2.out
+mini
+mini-asm
 
 # Generated output files
 t4.out.c
+t5.out.c
