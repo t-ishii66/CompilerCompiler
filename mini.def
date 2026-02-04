@@ -9,14 +9,31 @@ STMTS   : STMT STMTS        { call(1); call(2); }
         | STMT              { call(1); }
 ;
 
-STMT    : "set" NAME NUM    { print("int "); call(1); print("="); call(2); print(";\n"); }
-        | "out" EXPR        { print("printf(\"%d\\n\","); call(1); print(");\n"); }
+STMT    : "var" NAME            { print("int "); call(1); print(";\n"); }
+        | "set" NAME EXPR       { call(1); print("="); call(2); print(";\n"); }
+        | "input" NAME          { print("scanf(\"%d\",&"); call(1); print(");\n"); }
+        | "out" EXPR            { print("printf(\"%d\\n\","); call(1); print(");\n"); }
+        | "if" COND BLOCK       { print("if("); call(1); print("){\n"); call(2); print("}\n"); }
+        | "while" COND BLOCK    { print("while("); call(1); print("){\n"); call(2); print("}\n"); }
 ;
 
-EXPR    : NAME "+" NAME     { call(1); print("+"); call(2); }
-        | NAME "-" NAME     { call(1); print("-"); call(2); }
-        | NAME "*" NAME     { call(1); print("*"); call(2); }
-        | NAME              { call(1); }
+BLOCK   : STMT BLOCK            { call(1); call(2); }
+        | "end"                 { print(""); }
+;
+
+COND    : EXPR ">" EXPR     { call(1); print(">"); call(2); }
+        | EXPR "<" EXPR     { call(1); print("<"); call(2); }
+        | EXPR "=" EXPR     { call(1); print("=="); call(2); }
+;
+
+EXPR    : TERM "+" TERM     { call(1); print("+"); call(2); }
+        | TERM "-" TERM     { call(1); print("-"); call(2); }
+        | TERM "*" TERM     { call(1); print("*"); call(2); }
+        | TERM "/" TERM     { call(1); print("/"); call(2); }
+        | TERM              { call(1); }
+;
+
+TERM    : NAME              { call(1); }
         | NUM               { call(1); }
 ;
 
