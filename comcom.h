@@ -9,6 +9,8 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <setjmp.h>
+#include <string.h>
+#include <unistd.h>
 
 typedef unsigned char	byte;
 typedef unsigned int	uint;
@@ -16,16 +18,23 @@ typedef unsigned int	uint;
 #define TRUE	1
 #define FALSE	0
 
+/* Forward declarations */
+void back(void);
+void spoolOutput(void);
+void firstcall(int e);
+
 static FILE* FI = 0;		/* input file */
 static FILE* FO = 0;		/* output file */
-static FILE* FS = 0;		/* output file(additional) */
+static FILE* FS1 = 0;		/* spool file level 1 */
+static FILE* FS2 = 0;		/* spool file level 2 */
 
 static int K = TRUE;		/* K=FALSE:skip space */
 static int F = 0;		/* F=1: output to spool */
 static int D = 0;		/* D: auto generation number */
+static int verbose = 0;		/* verbose mode (file mode) */
 
 /* input file contents */
-#define IB_SIZE	5000
+#define IB_SIZE	50000
 static byte IB[IB_SIZE];
 static int I = 0;
 
@@ -77,12 +86,18 @@ void report()
 void stop(char* s)
 {
 	spoolOutput();
-	fclose(FS);
-	fclose(FO);
-	fclose(FI);
-	unlink("SPOOL.$$$");
-	report();
-	printf("\n%s\n", s);
+	fclose(FS1);
+	fclose(FS2);
+	if (verbose) {
+		fclose(FO);
+		fclose(FI);
+	}
+	unlink("SPOOL1.$$$");
+	unlink("SPOOL2.$$$");
+	if (verbose) {
+		report();
+		printf("\n%s\n", s);
+	}
 	exit(0);
 }
 void abend(char* s)
@@ -94,19 +109,32 @@ void abend(char* s)
 void init(int argc, char* argv[])
 {
 	uint	c;
-	printf("source file = %s\n", argv[1]);
-	printf("object file = %s\n", argv[2]);
 
-	FI = fopen(argv[1], "r");
-	if (!FI) abend("input file open");
+	if (argc == 1) {
+		/* stdin/stdout mode */
+		FI = stdin;
+		FO = stdout;
+	} else {
+		/* file mode */
+		verbose = 1;
+		printf("source file = %s\n", argv[1]);
+		printf("object file = %s\n", argv[2]);
 
-	FO = fopen(argv[2], "w");
-	if (!FO) abend("output file open");
+		FI = fopen(argv[1], "r");
+		if (!FI) abend("input file open");
 
-	FS = fopen("SPOOL.$$$", "w");
-	if (!FS) abend("spool file open");
+		FO = fopen(argv[2], "w");
+		if (!FO) abend("output file open");
+	}
 
-	printf("\n--- source list ---\n");
+	FS1 = fopen("SPOOL1.$$$", "w");
+	if (!FS1) abend("spool1 file open");
+
+	FS2 = fopen("SPOOL2.$$$", "w");
+	if (!FS2) abend("spool2 file open");
+
+	if (verbose)
+		printf("\n--- source list ---\n");
 	while (!feof(FI)) {
 		c = fgetc(FI);
 		if (maxI >= IB_SIZE)
@@ -119,7 +147,7 @@ uint fileInput()
 {
 	static int i = 0;
 	cntI ++;
-	if (i == I && i < maxI) 
+	if (verbose && i == I && i < maxI)
 		putchar(IB[i ++]);
 	return (uint)((I < maxI) ? IB[I ++] : EOF);
 }
@@ -138,7 +166,7 @@ void skipSpace(byte s)
 	-- I;
 }
 
-void check(byte* s)
+void check(const byte* s)
 {
 	skipSpace(*s);
 	while (*s) {
@@ -148,16 +176,18 @@ void check(byte* s)
 	}
 }
 
-#define spoolOpen()	 F=1
-#define spoolClose()	 F=0
+#define spoolOpen()	 F++
+#define spoolClose()	 F--
 
-void print(byte* s)
+void print(const byte* s)
 {
-	int z = strlen(s);
+	int z = strlen((const char*)s);
 	if (F == 0) {
-		fputs(s, FO); maxO += z;
+		fputs((const char*)s, FO); maxO += z;
+	} else if (F == 1) {
+		fputs((const char*)s, FS1); maxS += z;
 	} else {
-		fputs(s, FS); maxS += z;
+		fputs((const char*)s, FS2); maxS += z;
 	}
 }
 
@@ -169,19 +199,26 @@ void genNumber(uint* d)
 	if (*d == 0)
 		*d = ++ D;
 	sprintf(s, "%u", *d);
-	print(s);
+	print((byte*)s);
 }
 
 void spoolOutput()
 {
 	uint c;
-	fclose(FS);
-	FS = fopen("SPOOL.$$$", "r");
-	while (!feof(FS)) {
-		c = fgetc(FS);
+	fclose(FS1);
+	FS1 = fopen("SPOOL1.$$$", "r");
+	while (!feof(FS1)) {
+		c = fgetc(FS1);
 		if (c == EOF)
 			break;
-		// display source
+		putc(c, FO);
+	}
+	fclose(FS2);
+	FS2 = fopen("SPOOL2.$$$", "r");
+	while (!feof(FS2)) {
+		c = fgetc(FS2);
+		if (c == EOF)
+			break;
 		putc(c, FO);
 	}
 	maxO += maxS;
@@ -211,14 +248,14 @@ void back()
 	I = BS[B].i;
 	K = BS[B].k;
 	++ cntB;
-	longjmp(&(BS[B].j), 1);
+	longjmp(BS[B].j, 1);
 }
 
-void storeFunc(int (*f)())
+void storeFunc(void (*f)(int, int))
 {
 	if (T > TS_SIZE)
 		abend("TS over");
-	TS[T ++].f = f;
+	TS[T ++].f = (int (*)())f;
 	if (T > maxT)
 		maxT = T;
 }
@@ -259,7 +296,7 @@ void call2(int n, int b)
 		abend("branch no");
 
 	m = (TS[n + 1 + b].n);
-	(*TS[m].f)(m, 0);
+	((void (*)(int, int))TS[m].f)(m, 0);
 }
 
 void exec()
@@ -268,13 +305,13 @@ void exec()
 	if (E != 1)
 		abend("exec");
 	t = ES[-- E];
-	(*TS[t].f)(t, 0);
+	((void (*)(int, int))TS[t].f)(t, 0);
 }
 
 int main(int argc, char* argv[])
 {
-	if (argc != 3) {
-		printf(" Usage : %s file.def file.c e\n", argv[0]);
+	if (argc != 1 && argc != 3) {
+		printf(" Usage : %s [input output]\n", argv[0]);
 		exit(1);
 	}
 
