@@ -1,0 +1,153 @@
+START(MINI)
+MINI    : STMTS {
+        print(".text\n");
+        print(".globl main\n");
+        print("main:\n");
+        print("    pushq %rbp\n");
+        print("    movq %rsp, %rbp\n");
+        call(1);
+        print("    xorl %eax, %eax\n");
+        print("    popq %rbp\n");
+        print("    ret\n");
+        <<
+            print(".data\n");
+            print("fmt_out: .string \"%ld\\n\"\n");
+            print("fmt_in: .string \"%ld\"\n");
+        >> }
+;
+
+STMTS   : STMT STMTS        { call(1); call(2); }
+        | STMT              { call(1); }
+;
+
+STMT    : "var" NAME            { << << print("_"); call(1); print(": .quad 0\n"); >> >> }
+        | "set" NAME EXPR       { call(2);
+                                  print("    movq %rax, _"); call(1); print("(%rip)\n"); }
+        | "input" NAME          { print("    leaq _"); call(1); print("(%rip), %rsi\n");
+                                  print("    leaq fmt_in(%rip), %rdi\n");
+                                  print("    xorl %eax, %eax\n");
+                                  print("    call scanf\n"); }
+        | "out" EXPR            { call(1);
+                                  print("    movq %rax, %rsi\n");
+                                  print("    leaq fmt_out(%rip), %rdi\n");
+                                  print("    xorl %eax, %eax\n");
+                                  print("    call printf\n"); }
+        | "if" COND BLOCK       { call(1);
+                                  print("    testq %rax, %rax\n");
+                                  print("    jz .Lif"); genNum(); print("\n");
+                                  call(2);
+                                  print(".Lif"); genNum(); print(":\n"); }
+        | "while" COND BLOCK    { print(".Lws"); genNum(); print(":\n");
+                                  call(1);
+                                  print("    testq %rax, %rax\n");
+                                  print("    jz .Lwe"); genNum(); print("\n");
+                                  call(2);
+                                  print("    jmp .Lws"); genNum(); print("\n");
+                                  print(".Lwe"); genNum(); print(":\n"); }
+;
+
+BLOCK   : STMT BLOCK            { call(1); call(2); }
+        | "end"                 { print(""); }
+;
+
+COND    : EXPR ">" EXPR     { call(1);
+                              print("    pushq %rax\n");
+                              call(2);
+                              print("    popq %rbx\n");
+                              print("    cmpq %rax, %rbx\n");
+                              print("    setg %al\n");
+                              print("    movzbq %al, %rax\n"); }
+        | EXPR "<" EXPR     { call(1);
+                              print("    pushq %rax\n");
+                              call(2);
+                              print("    popq %rbx\n");
+                              print("    cmpq %rax, %rbx\n");
+                              print("    setl %al\n");
+                              print("    movzbq %al, %rax\n"); }
+        | EXPR "=" EXPR     { call(1);
+                              print("    pushq %rax\n");
+                              call(2);
+                              print("    popq %rbx\n");
+                              print("    cmpq %rax, %rbx\n");
+                              print("    sete %al\n");
+                              print("    movzbq %al, %rax\n"); }
+;
+
+EXPR    : TERM "+" TERM     { call(1);
+                              print("    pushq %rax\n");
+                              call(2);
+                              print("    popq %rbx\n");
+                              print("    addq %rbx, %rax\n"); }
+        | TERM "-" TERM     { call(1);
+                              print("    pushq %rax\n");
+                              call(2);
+                              print("    movq %rax, %rbx\n");
+                              print("    popq %rax\n");
+                              print("    subq %rbx, %rax\n"); }
+        | TERM "*" TERM     { call(1);
+                              print("    pushq %rax\n");
+                              call(2);
+                              print("    popq %rbx\n");
+                              print("    imulq %rbx, %rax\n"); }
+        | TERM "/" TERM     { call(1);
+                              print("    pushq %rax\n");
+                              call(2);
+                              print("    movq %rax, %rbx\n");
+                              print("    popq %rax\n");
+                              print("    cqto\n");
+                              print("    idivq %rbx\n"); }
+        | TERM              { call(1); }
+;
+
+TERM    : NAME              { print("    movq _"); call(1); print("(%rip), %rax\n"); }
+        | NUM               { print("    movq $"); call(1); print(", %rax\n"); }
+;
+
+NAME    : ALPHA+NAME        { call(1); call(2); }
+        | ALPHA             { call(1); }
+;
+
+NUM     : DIGIT+NUM         { call(1); call(2); }
+        | DIGIT             { call(1); }
+;
+
+ALPHA   : "a" { print("a"); }
+        | "b" { print("b"); }
+        | "c" { print("c"); }
+        | "d" { print("d"); }
+        | "e" { print("e"); }
+        | "f" { print("f"); }
+        | "g" { print("g"); }
+        | "h" { print("h"); }
+        | "i" { print("i"); }
+        | "j" { print("j"); }
+        | "k" { print("k"); }
+        | "l" { print("l"); }
+        | "m" { print("m"); }
+        | "n" { print("n"); }
+        | "o" { print("o"); }
+        | "p" { print("p"); }
+        | "q" { print("q"); }
+        | "r" { print("r"); }
+        | "s" { print("s"); }
+        | "t" { print("t"); }
+        | "u" { print("u"); }
+        | "v" { print("v"); }
+        | "w" { print("w"); }
+        | "x" { print("x"); }
+        | "y" { print("y"); }
+        | "z" { print("z"); }
+;
+
+DIGIT   : "0" { print("0"); }
+        | "1" { print("1"); }
+        | "2" { print("2"); }
+        | "3" { print("3"); }
+        | "4" { print("4"); }
+        | "5" { print("5"); }
+        | "6" { print("6"); }
+        | "7" { print("7"); }
+        | "8" { print("8"); }
+        | "9" { print("9"); }
+;
+END
