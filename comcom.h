@@ -34,7 +34,7 @@ static int D = 0;		/* D: auto generation number */
 static int verbose = 0;		/* verbose mode (file mode) */
 
 /* input file contents */
-#define IB_SIZE	5000
+#define IB_SIZE	50000
 static byte IB[IB_SIZE];
 static int I = 0;
 
