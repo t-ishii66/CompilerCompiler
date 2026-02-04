@@ -1,0 +1,87 @@
+START(MINI)
+MINI    : STMTS {
+        print("#include <stdio.h>\nint main(){\n");
+        call(1);
+        print("return 0;\n}\n"); }
+;
+
+STMTS   : STMT STMTS        { call(1); call(2); }
+        | STMT              { call(1); }
+;
+
+STMT    : "var" NAME            { print("int "); call(1); print(";\n"); }
+        | "set" NAME EXPR       { call(1); print("="); call(2); print(";\n"); }
+        | "input" NAME          { print("scanf(\"%d\",&"); call(1); print(");\n"); }
+        | "out" EXPR            { print("printf(\"%d\\n\","); call(1); print(");\n"); }
+        | "if" COND BLOCK       { print("if("); call(1); print("){\n"); call(2); print("}\n"); }
+        | "while" COND BLOCK    { print("while("); call(1); print("){\n"); call(2); print("}\n"); }
+;
+
+BLOCK   : STMT BLOCK            { call(1); call(2); }
+        | "end"                 { print(""); }
+;
+
+COND    : EXPR ">" EXPR     { call(1); print(">"); call(2); }
+        | EXPR "<" EXPR     { call(1); print("<"); call(2); }
+        | EXPR "=" EXPR     { call(1); print("=="); call(2); }
+;
+
+EXPR    : TERM "+" TERM     { call(1); print("+"); call(2); }
+        | TERM "-" TERM     { call(1); print("-"); call(2); }
+        | TERM "*" TERM     { call(1); print("*"); call(2); }
+        | TERM "/" TERM     { call(1); print("/"); call(2); }
+        | TERM              { call(1); }
+;
+
+TERM    : NAME              { call(1); }
+        | NUM               { call(1); }
+;
+
+NAME    : ALPHA+NAME        { call(1); call(2); }
+        | ALPHA             { call(1); }
+;
+
+NUM     : DIGIT+NUM         { call(1); call(2); }
+        | DIGIT             { call(1); }
+;
+
+ALPHA   : "a" { print("a"); }
+        | "b" { print("b"); }
+        | "c" { print("c"); }
+        | "d" { print("d"); }
+        | "e" { print("e"); }
+        | "f" { print("f"); }
+        | "g" { print("g"); }
+        | "h" { print("h"); }
+        | "i" { print("i"); }
+        | "j" { print("j"); }
+        | "k" { print("k"); }
+        | "l" { print("l"); }
+        | "m" { print("m"); }
+        | "n" { print("n"); }
+        | "o" { print("o"); }
+        | "p" { print("p"); }
+        | "q" { print("q"); }
+        | "r" { print("r"); }
+        | "s" { print("s"); }
+        | "t" { print("t"); }
+        | "u" { print("u"); }
+        | "v" { print("v"); }
+        | "w" { print("w"); }
+        | "x" { print("x"); }
+        | "y" { print("y"); }
+        | "z" { print("z"); }
+;
+
+DIGIT   : "0" { print("0"); }
+        | "1" { print("1"); }
+        | "2" { print("2"); }
+        | "3" { print("3"); }
+        | "4" { print("4"); }
+        | "5" { print("5"); }
+        | "6" { print("6"); }
+        | "7" { print("7"); }
+        | "8" { print("8"); }
+        | "9" { print("9"); }
+;
+END

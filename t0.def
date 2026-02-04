@@ -1,17 +1,23 @@
 START(COMCOM)
-COMCOM	: "START(" NAME ")" STMTS "END"	{  
+COMCOM	: "START(" NAME ")" STMTS "END"	{
 					print("#include \"comcom.h\"\n");
-					print("void firstcall(int e) { _");
-					call(1);
-					print("(e); }\n");
+					<<
+						print("void firstcall(int e) { _");
+						call(1);
+						print("(e); }\n");
+					>>
 					call(2); }
 ;
 STMTS	: STMT STMTS			{ call(1); call(2); }
 	| STMT				{ call(1); }
 ;
-STMT	: NAME ":" RULES ";"		{ print("\n void _"); call(1);
-					print("(int e) {\n"); call(2);
-					print("\n }\n"); }
+STMT	: NAME ":" RULES ";"		{ print("void _"); call(1);
+					print("(int e);\n");
+					<<
+						print("\n void _"); call(1);
+						print("(int e) {\n"); call(2);
+						print("\n }\n");
+					>> }
 ;
 RULES	: RULE "|" RULES		{ print(" if (try()) {"); call(1);
 					print(" ok(); }\n  else "); call(2); }
@@ -20,13 +26,13 @@ RULES	: RULE "|" RULES		{ print(" if (try()) {"); call(1);
 RULE	: TERMS "{" OUTS "}"		{ call(1); print(" mknode(_f");
 					genNum();
 					print(");");
-					<!--
+					<<
 						print("void _f");
 						genNum();
 						print("(int n, int a) {");
 						call(2);
 						print("}\n");
-					// -->
+					>>
 					}
 ;
 TERMS	: TERM TERMS			{ call(1); call(2); }
@@ -46,7 +52,7 @@ OUT	: "call(" NUMS ");"		{ print("call("); call(1);
 	| "print(" QSTR ");"		{ print("print("); call(1);
 					print(");"); }
 	| "genNum();"			{ print("genNum();"); }
-	| "<!--" OUTS "// -->"		{ print("spoolOpen();\n"); call(1);
+	| "<<" OUTS ">>"		{ print("spoolOpen();\n"); call(1);
 					print("spoolClose();\n"); }
 ;
 NAME	: CHR+NAME			{ call(1); call(2); }
