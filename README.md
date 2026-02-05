@@ -1,4 +1,4 @@
-# CompilerCompiler
+# Compiler Compiler from scratch
 
 ## Overview
 This project is a tiny **compiler compiler**: a tool that reads a grammar definition and
