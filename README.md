@@ -7,6 +7,7 @@ produces a C parser/compiler for that grammar.
 You can think of a compiler compiler as a "compiler generator." Instead of hand-writing a
 parser in C, you describe the grammar in a compact notation, and the tool emits the C code
 that recognizes and processes that grammar.
+(Detailed documentation is coming soon. Please stay tuned.)
 
 ## The Self-Referential Story
 This repository is special because it is **self-referential**.
