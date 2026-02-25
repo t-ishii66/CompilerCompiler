@@ -15,8 +15,8 @@ This repository is special because it is **self-referential**.
 1. The file `t0.def` defines the grammar of the compiler compiler itself.
 2. From that definition, we can create (by hand) the corresponding generated C source,
    which is stored as `t3.out.c`.
-3. When you compile `t3.out.c`, you get the executable `a.out`.
-4. If you run `a.out` on `t0.def`, it generates a new file `t4.out.c`.
+3. When you compile `t3.out.c`, you get the executable `ccgen`.
+4. If you run `ccgen` on `t0.def`, it generates a new file `t4.out.c`.
 5. `t4.out.c` is **bit-for-bit identical** to `t3.out.c`.
 
 That is the mind‑bending part: the grammar `t0.def` defines **the compiler compiler itself**,
@@ -32,8 +32,8 @@ and the generated compiler can reproduce its own source code.
 Run the following commands to see the self-generation in action:
 
 ```sh
-gcc t3.out.c -Wno-pointer-sign -o a.out
-./a.out t0.def t4.out.c
+gcc t3.out.c -Wno-pointer-sign -o ccgen
+./ccgen t0.def t4.out.c
 diff t3.out.c t4.out.c
 # (no differences)
 ```
@@ -54,7 +54,7 @@ infix expressions like `1+2*3` into postfix notation `1 2 3 * +`.
 2. Generate a C parser:
 
 ```sh
-./a.out rpn.def rpn.c
+./ccgen rpn.def rpn.c
 gcc rpn.c -Wno-pointer-sign -o rpn
 ```
 
@@ -196,7 +196,7 @@ The same mini language has two backend implementations:
                         └─────────────┘
                               ↑
 ┌──────────────┐        ┌───────────┐
-│ program.mini │   →    │   a.out   │  (Compiler Compiler)
+│ program.mini │   →    │   ccgen   │  (Compiler Compiler)
 └──────────────┘        └───────────┘
                               ↓
                         ┌─────────────┐
@@ -208,7 +208,7 @@ The same mini language has two backend implementations:
 
 ```sh
 # Build the transpiler
-./a.out mini.def mini.c
+./ccgen mini.def mini.c
 gcc mini.c -Wno-pointer-sign -o mini
 
 # Transpile mini to C, then compile and run
@@ -221,7 +221,7 @@ gcc program.c -o program
 
 ```sh
 # Build the compiler
-./a.out mini-asm.def mini-asm.c
+./ccgen mini-asm.def mini-asm.c
 gcc mini-asm.c -Wno-pointer-sign -o mini-asm
 
 # Compile to assembly, then assemble and run (Linux x86-64)
@@ -263,16 +263,16 @@ gcc program.s -o program -no-pie
 
 ```sh
 # Build compiler compiler
-gcc t3.out.c -Wno-pointer-sign -o a.out
+gcc t3.out.c -Wno-pointer-sign -o ccgen
 
 # Verify self-reproduction
-./a.out t0.def t4.out.c && diff t3.out.c t4.out.c
+./ccgen t0.def t4.out.c && diff t3.out.c t4.out.c
 
 # Build mini transpiler
-./a.out mini.def mini.c && gcc mini.c -Wno-pointer-sign -o mini
+./ccgen mini.def mini.c && gcc mini.c -Wno-pointer-sign -o mini
 
 # Build mini-asm compiler
-./a.out mini-asm.def mini-asm.c && gcc mini-asm.c -Wno-pointer-sign -o mini-asm
+./ccgen mini-asm.def mini-asm.c && gcc mini-asm.c -Wno-pointer-sign -o mini-asm
 ```
 
 ---
