@@ -126,7 +126,7 @@ This project includes a complete example language called **mini**.
 It demonstrates how the same grammar can have different backends:
 one targeting C, another targeting x86-64 assembly.
 
-### Grammar
+### Grammar (BNF-like)
 
 ```
 PROGRAM   := STATEMENT*
