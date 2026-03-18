@@ -284,5 +284,7 @@ gcc t3.out.c -Wno-pointer-sign -o ccgen
 
 Original source code from Interface Magazine 1995/12, CQ Publishing Company.
 
+Copyright(C) 2026 t-ishii66. All rights reserved. Unless otherwise noted, this applies to all files in this repository.
+
 ---
 Enjoy exploring how a compiler can define itself.
