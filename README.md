@@ -1,19 +1,27 @@
-# Compiler Compiler from scratch
+# Compiler Compiler from Scratch — A Self-Hosting Parser Generator in C
+
+<img src="top.png" alt="Compiler Compiler" width="300">
 
 ## Overview
-This project is a tiny **compiler compiler**: a tool that reads a grammar definition and
-produces a C parser/compiler for that grammar.
+This project is a tiny **compiler compiler** (also known as a **parser generator**): a tool
+that reads a **BNF-like grammar definition** and produces a **C parser/compiler** for that grammar.
+
+Similar in spirit to classic tools like **yacc**, **bison**, and **ANTLR**, but built entirely
+from scratch in C with no external dependencies. It is a minimal, educational implementation
+that demonstrates the core ideas behind **compiler construction**, **lexical analysis**, and
+**syntax-directed translation**.
 
 You can think of a compiler compiler as a "compiler generator." Instead of hand-writing a
-parser in C, you describe the grammar in a compact notation, and the tool emits the C code
-that recognizes and processes that grammar.
+**recursive descent parser** in C, you describe the grammar in a compact notation, and the
+tool emits the C code that recognizes and processes that grammar — complete with
+**backtracking**, **parse tree construction**, and **code generation**.
 
 ## Document
 
 Detailed documentation: https://t-ishii66.github.io/Understanding-CompilerCompiler/
 
-## The Self-Referential Story
-This repository is special because it is **self-referential**.
+## The Self-Referential Story — A Bootstrapping Compiler
+This repository is special because it is **self-referential** (also called **self-hosting**).
 
 1. The file `t0.def` defines the grammar of the compiler compiler itself.
 2. From that definition, we can create (by hand) the corresponding generated C source,
@@ -44,9 +52,10 @@ diff t3.out.c t4.out.c
 If `diff` shows no differences, the self-reproduction succeeded.
 
 ## Why This Is Interesting
-- **Self-reference:** a system that defines itself is rare and fascinating.
-- **Educational value:** it demonstrates how grammars become programs.
-- **Compactness:** the runtime (`comcom.h`) is small and the output is simple C.
+- **Self-hosting / bootstrapping compiler:** a system that defines itself is rare and fascinating — the compiler compiler can regenerate its own source code.
+- **Educational value:** it demonstrates how **formal grammars** become working programs, making it ideal for learning **compiler design** and **language implementation**.
+- **Compactness:** the runtime (`comcom.h`) is small and the output is simple, portable C — no dependencies on lex, flex, or yacc.
+- **Multiple backends:** the included mini language shows how one grammar can target both **C transpilation** and **x86-64 native code generation**.
 
 ## Getting Started With Your Own Grammar
 You can define a new grammar and generate a C parser from it. As an example,
@@ -285,6 +294,17 @@ gcc t3.out.c -Wno-pointer-sign -o ccgen
 Original source code from Interface Magazine 1995/12, CQ Publishing Company.
 
 Copyright(C) 2026 t-ishii66. All rights reserved. Unless otherwise noted, this applies to all files in this repository.
+
+---
+
+## Keywords
+
+compiler compiler, parser generator, self-hosting compiler, bootstrapping compiler,
+compiler construction, compiler design, formal grammar, BNF, syntax-directed translation,
+recursive descent parser, backtracking parser, lexical analysis, code generation,
+C transpiler, x86-64 assembly, yacc alternative, bison alternative, ANTLR alternative,
+educational compiler, mini language, reverse polish notation, self-referential program,
+metacompiler, compiler generator, language implementation, parsing techniques
 
 ---
 Enjoy exploring how a compiler can define itself.
