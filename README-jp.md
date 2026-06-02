@@ -27,7 +27,7 @@ lang: ja
 
 ## ドキュメント
 
-詳細なドキュメント: [https://t-ishii66.github.io/Understanding-CompilerCompiler/](https://t-ishii66.github.io/Understanding-CompilerCompiler/)
+詳細なドキュメント: [https://t-ishii66.github.io/Understanding-CompilerCompiler/README-jp.html](https://t-ishii66.github.io/Understanding-CompilerCompiler/README-jp.html)
 
 ## 自己言及の物語 — ブートストラップ・コンパイラ
 このリポジトリが特別なのは、**自己言及的**(別名**セルフホスティング**)であるという点です。
