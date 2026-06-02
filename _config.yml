@@ -1,0 +1,40 @@
+title: "Compiler Compiler from Scratch — A Self-Hosting Parser Generator in C"
+description: >-
+  A tiny, self-hosting compiler compiler (parser generator) written from
+  scratch in C. Reads a BNF-like grammar definition and emits a working
+  C parser/compiler — complete with backtracking, parse-tree construction,
+  and code generation. Ideal for learning compiler construction, formal
+  grammars, and bootstrapping compilers.
+
+url: "https://t-ishii66.github.io"
+baseurl: "/CompilerCompiler"
+repository: t-ishii66/CompilerCompiler
+
+theme: jekyll-theme-cayman
+
+author: t-ishii66
+lang: en
+
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+exclude:
+  - "*.bak"
+  - PROBLEMS.md
+  - "*PROBLEMS*.md"
+  - Makefile
+  - build/
+  - dist/
+  - target/
+  - node_modules/
+  - .vscode/
+  - "*.o"
+  - "*.so"
+  - "*.dylib"
+  - "*.exe"
+
+markdown: kramdown
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge

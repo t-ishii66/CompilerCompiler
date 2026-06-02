@@ -9,3 +9,12 @@ mini-asm
 # Generated output files
 t4.out.c
 t5.out.c
+
+# Jekyll / GitHub Pages
+_site/
+.jekyll-cache/
+.jekyll-metadata
+
+# Local review notes (never commit)
+PROBLEMS.md
+*PROBLEMS*.md

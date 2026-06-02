@@ -1,10 +1,33 @@
+---
+title: "Compiler Compiler from Scratch — A Self-Hosting Parser Generator in C"
+description: "A tiny self-hosting compiler compiler / parser generator written from scratch in C. BNF-like grammar in, working C parser out — yacc alternative for learning."
+keywords: "compiler compiler, parser generator, self-hosting compiler, bootstrapping compiler, compiler construction, compiler design, formal grammar, BNF, syntax-directed translation, recursive descent parser, backtracking parser, lexical analysis, code generation, C transpiler, x86-64 assembly, yacc alternative, bison alternative, ANTLR alternative, educational compiler, mini language, reverse polish notation, self-referential program, metacompiler, compiler generator, language implementation, parsing techniques, open source, tutorial, documentation, GitHub, CompilerCompiler"
+permalink: /
+---
+
 # Compiler Compiler from Scratch — A Self-Hosting Parser Generator in C
+
+<sub>**English** | [日本語](README-jp.md)</sub>
 
 <img src="top.png" alt="Compiler Compiler" width="300">
 
 ## Overview
 This project is a tiny **compiler compiler** (also known as a **parser generator**): a tool
 that reads a **BNF-like grammar definition** and produces a **C parser/compiler** for that grammar.
+
+<!-- SEO intro added by setup-github-pages; review and adjust -->
+
+If you have ever wanted to **build your own compiler from scratch** — design a
+small **programming language**, understand how a **lexer**, **parser**, and
+**code generator** fit together, or learn **compiler construction** by working
+through a real **self-hosting / bootstrapping** example in plain **C** — this
+educational **parser generator** is for you. Topics covered include
+**BNF-like grammars**, **recursive descent parsing**, **backtracking**,
+**parse-tree construction**, **C transpilation**, and **x86-64 assembly code
+generation**, offered as a minimal, dependency-free alternative to
+**yacc**, **bison**, and **ANTLR**.
+
+<!-- /SEO intro -->
 
 Similar in spirit to classic tools like **yacc**, **bison**, and **ANTLR**, but built entirely
 from scratch in C with no external dependencies. It is a minimal, educational implementation
