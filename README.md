@@ -41,7 +41,7 @@ tool emits the C code that recognizes and processes that grammar — complete wi
 
 ## Document
 
-Detailed documentation: https://t-ishii66.github.io/Understanding-CompilerCompiler/
+Detailed documentation: [https://t-ishii66.github.io/Understanding-CompilerCompiler/](https://t-ishii66.github.io/Understanding-CompilerCompiler/)
 
 ## The Self-Referential Story — A Bootstrapping Compiler
 This repository is special because it is **self-referential** (also called **self-hosting**).
@@ -313,6 +313,8 @@ gcc t3.out.c -Wno-pointer-sign -o ccgen
 ---
 
 ## Credits
+
+Source code on GitHub: [https://github.com/t-ishii66/CompilerCompiler](https://github.com/t-ishii66/CompilerCompiler)
 
 Original source code from Interface Magazine 1995/12, CQ Publishing Company.
 

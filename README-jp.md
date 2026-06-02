@@ -27,7 +27,7 @@ lang: ja
 
 ## ドキュメント
 
-詳細なドキュメント: https://t-ishii66.github.io/Understanding-CompilerCompiler/
+詳細なドキュメント: [https://t-ishii66.github.io/Understanding-CompilerCompiler/](https://t-ishii66.github.io/Understanding-CompilerCompiler/)
 
 ## 自己言及の物語 — ブートストラップ・コンパイラ
 このリポジトリが特別なのは、**自己言及的**(別名**セルフホスティング**)であるという点です。
@@ -291,6 +291,8 @@ gcc t3.out.c -Wno-pointer-sign -o ccgen
 ---
 
 ## クレジット
+
+ソースコード (GitHub): [https://github.com/t-ishii66/CompilerCompiler](https://github.com/t-ishii66/CompilerCompiler)
 
 オリジナルのソースコードは Interface Magazine 1995年12月号(CQ出版社)より。
 
